@@ -1,12 +1,17 @@
 import argparse as ag
 import os 
+from subprocess import call
 
 def performAttack(location, serverIP, username, password=None):
 	if (password is None):
-		print ("Null Password, brute forced to: " + bruteForcePassword())
+		password = bruteForcePassword()
+		print ("Null Password, brute forced to: " + password)
 	else:
 		print ("password is " + password)
 	os.mkdir(location)
+	mountpoint = ""
+	mountArgs = ["mount", "-t", "cifs", "-o", "username=" + username + ",password=" + password, "//" + serverIP + "/" + mountpoint, location]
+	call(mountArgs)
 
 def bruteForcePassword():
 	return "bruteForcePassword"
