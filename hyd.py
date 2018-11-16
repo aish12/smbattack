@@ -16,7 +16,7 @@ class HydraCracker:
 			arguments.append("-l")
 			arguments.append(parameters.u)
 		
-		arguments.append("-p")
+		arguments.append("-P")
 		arguments.append(parameters.p)		
 		arguments.append(parameters.i)
 		arguments.append("smb")
