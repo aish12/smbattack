@@ -12,11 +12,11 @@ class HydraCracker:
 		parameters = a_parser.parse_args()
 		
 		arguments = ["hydra"]
-		if a_parser.u != "":
-			arguments.append("-l " + a_parser.u)
+		if parameters.u != "":
+			arguments.append("-l " + parameters.u)
 		
-		arguments.append("-P " + a_parser.p)		
-		arguments.append(a_parser.i)
+		arguments.append("-p " + parameters.p)		
+		arguments.append(parameters.i)
 		arguments.append("smb")
 		call(arguments)
 
