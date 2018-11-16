@@ -13,11 +13,14 @@ class HydraCracker:
 		
 		arguments = ["hydra"]
 		if parameters.u != "":
-			arguments.append("-l " + parameters.u)
+			arguments.append("-l")
+			arguments.append(parameters.u)
 		
-		arguments.append("-p " + parameters.p)		
+		arguments.append("-p")
+		arguments.append(parameters.p)		
 		arguments.append(parameters.i)
 		arguments.append("smb")
+		print(arguments)
 		call(arguments)
 
 if __name__ == '__main__':
