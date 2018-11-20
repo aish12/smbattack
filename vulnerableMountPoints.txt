@@ -3,8 +3,8 @@
 	---------       ----      -------
 	ADMIN$          Disk      Remote Admin
 	C$              Disk      Default share
+	Documents       Disk      
 	IPC$            IPC       Remote IPC
-	smbhacktest     Disk      Make this susceptible to SMB attack
 Reconnecting with SMB1 for workgroup listing.
-Connection to 10.202.208.208 failed (Error NT_STATUS_RESOURCE_NAME_NOT_FOUND)
+Connection to 10.202.208.93 failed (Error NT_STATUS_RESOURCE_NAME_NOT_FOUND)
 Failed to connect with SMB1 -- no workgroup available
