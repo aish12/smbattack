@@ -1,0 +1,66 @@
+\documentclass[a4paper]{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\title{\textbf{CS 378 Final Project Report:
+\\{\Large Automating SMB Mounting}}}
+\author{Dustin Huang, Godfrey Macasero, Aish Shashidhar, Allen Zhang}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{What is our Tool?}
+\label{sec:introduction}
+
+Our tool is an automation service that allows mounting onto a SMB server with the ability to crack the required password needed to access the server. To run this tool, the following parameters are needed.
+\begin{itemize}
+\item Mounting location
+\item Windows Server Name
+\item Username
+\item Password (Optional)
+\end{itemize}
+
+\subsection*{Commands}
+Run the script with the password flag if the password is known. If no password is passed in the parameter, the tool will brute force the password.
+\begin{description}
+\item[Password Known:] \textit{python3 smbattack --mountloc ./mount --servername SMB-Server --username admin --password password}
+\item[Password Unknown (Brute Force):] \textit{python3 smbattack --mountloc ./mount --servername SMB-Server --username admin}
+\end{description}
+
+\renewcommand{\thesubsection}{\Alph{subsection}.}
+
+\section{How does it work?}
+\subsection{Password Cracking}
+Hydra is a network logon cracker tested on multiple well-known protocols, including smb. It is a brute force password cracker which tries multiple passwords with a given username to crack the password.
+
+\subsection{Finding the Mount Point}
+
+\subsection{Mounting the SMB File}
+
+\section{What problems did we encounter?}
+\begin{itemize}
+\item Figuring out why mounting did not work (it had to be in the bridged connection)
+\item When we were trying to search for the mounting point using smb client we could not figure out the issue so we just had to reset our virtual machine with Windows.
+\item Setting up the windows smb client was very difficult. When we set up the shared folder on a client, it would work correctly with our tool sometimes, and other times give us errors, like \textit{NT\textunderscore STATUS\textunderscore REVISION\textunderscore MISMATCH}.
+\item  There isn’t a lot of documentation on these errors, or any indication why the client is unstable. We are using SMB1 for this software because it is insecure. Because SMB1 is outdated software, we concluded that this bug is likely something Microsoft has not spent time fixing, and thus is unstable. 
+\end{itemize}
+
+\section{What can we improve?}
+\subsection{Salted Passwords}
+Hydra only handles unsalted passwords. A stronger password cracking tool would be John The Ripper. If we can access a password hash on the SMB mount point, we would be able to use John to crack that hash.
+
+\subsection{Expanded Password List}
+We could also expand the password list to include well known word and number combinations. Passwords like “Password123!” May be common because they meet the requirements of many newer authentication sites. Including these would likely improve the success rate of the password-cracking portion of this tool. 
+
+\subsection{Graceful Mount Point access}
+We could also expand the password list to include well known word and number combinations. Passwords like “Password123!” May be common because they meet the requirements of many newer authentication sites. Including these would likely improve the success rate of the password-cracking portion of this tool. 
+
+\subsection{Graceful Error Handling}
+Right now, if an error occurs while trying to find the mountpoint of the server, we send the output back to the user. To improve the usability of our tool, our group could provide detailed suggestions depending on the error the server sent back.
+
+\end{document}
