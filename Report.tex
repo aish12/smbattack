@@ -1,10 +1,10 @@
 \documentclass[a4paper]{article}
 
-\usepackage[english]{babel}
-\usepackage[utf8]{inputenc}
-\usepackage{amsmath}
-\usepackage{graphicx}
-\usepackage[colorinlistoftodos]{todonotes}
+% \usepackage[english]{babel}
+% \usepackage[utf8]{inputenc}
+% \usepackage{amsmath}
+% \usepackage{graphicx}
+% \usepackage[colorinlistoftodos]{todonotes}
 \title{\textbf{CS 378 Final Project Report:
 \\{\Large Automating SMB Mounting}}}
 \author{Dustin Huang, Godfrey Macasero, Aish Shashidhar, Allen Zhang}
@@ -39,13 +39,17 @@ Run the script with the password flag if the password is known. If no password i
 Hydra is a network logon cracker tested on multiple well-known protocols, including smb. It is a brute force password cracker which tries multiple passwords with a given username to crack the password.
 
 \subsection{Finding the Mount Point}
+Smbclient is a samba client that has an interface like ftp. It is a tool that can be used to test connectivity in a Windows share. We use this to find out the name of the mount point using the -L tag with the IP address of the user we are trying to get files from.
 
-\subsection{Mounting the SMB File}
+\subsection{Mounting the SMB Directory}
+Cifs(Common Internet File System) is a particular implementation of the Server Message Block protocol, created by Microsoft. We chose to use this instead of smbfs because it is not maintained anymore. 
 
 \section{What problems did we encounter?}
 \begin{itemize}
+\item Syntax Errors - We decided to use the argparse library to help us pass arguments to external calls (hydra, smbclient, etc).  We ran into a problem where the arguments were seemingly being passed incorrectly despite the syntax being correct.  The issue was resolved when we realized that adding one compound argument(such as “-p password”) was not the same as adding two arguments(“-p” and “password” separately).
+\item Unable to find smb mount point - Another issue was when we were trying to search for the mounting point using smb client we could not figure out the issue so we just had to reset our vm with Windows.
+\item SMB mounting created a symlink instead of a copy
 \item Figuring out why mounting did not work (it had to be in the bridged connection)
-\item When we were trying to search for the mounting point using smb client we could not figure out the issue so we just had to reset our virtual machine with Windows.
 \item Setting up the windows smb client was very difficult. When we set up the shared folder on a client, it would work correctly with our tool sometimes, and other times give us errors, like \textit{NT\textunderscore STATUS\textunderscore REVISION\textunderscore MISMATCH}.
 \item  There isn’t a lot of documentation on these errors, or any indication why the client is unstable. We are using SMB1 for this software because it is insecure. Because SMB1 is outdated software, we concluded that this bug is likely something Microsoft has not spent time fixing, and thus is unstable. 
 \end{itemize}
@@ -54,11 +58,9 @@ Hydra is a network logon cracker tested on multiple well-known protocols, includ
 \subsection{Salted Passwords}
 Hydra only handles unsalted passwords. A stronger password cracking tool would be John The Ripper. If we can access a password hash on the SMB mount point, we would be able to use John to crack that hash.
 
-\subsection{Expanded Password List}
-We could also expand the password list to include well known word and number combinations. Passwords like “Password123!” May be common because they meet the requirements of many newer authentication sites. Including these would likely improve the success rate of the password-cracking portion of this tool. 
-
 \subsection{Graceful Mount Point access}
-We could also expand the password list to include well known word and number combinations. Passwords like “Password123!” May be common because they meet the requirements of many newer authentication sites. Including these would likely improve the success rate of the password-cracking portion of this tool. 
+Right now, our tool is generating a file to store the mount point(s) of the SMB server, then parsing the file to mount the mountpoint(s). A sleeker solution would do this in memory, instead of saving this information to disk. The difficulty is that the output is the result of a unix function call, and all of this information needs to be stored somewhere, not sent to stdout. This is only available for very recent versions of python3. 
+\newline\newline\small\textit{(https://stackoverflow.com/questions/4760215/running-shell-command-and-capturing-the-output)}
 
 \subsection{Graceful Error Handling}
 Right now, if an error occurs while trying to find the mountpoint of the server, we send the output back to the user. To improve the usability of our tool, our group could provide detailed suggestions depending on the error the server sent back.
