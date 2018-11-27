@@ -67,12 +67,12 @@ def performAttack(location, serverIP, username, password=None):
 			os.mkdir(tempLocation)
 			mountArgs = ["mount", "-t", "cifs", "-o", "username=" + username + ",password=" + password, "//" + serverIP + "/" + mountpoint, tempLocation]
 			call(mountArgs)
-			print ("remote filesystem " + serverIP + "/" + mountpoint + "is mounted at " + tempLocation)
+			print ("remote filesystem " + serverIP + "/" + mountpoint + " is mounted at " + tempLocation)
 	else:
 		os.mkdir(location)
 		mountArgs = ["mount", "-t", "cifs", "-o", "username=" + username + ",password=" + password, "//" + serverIP + "/" + mountpoint, location]
 		call(mountArgs)
-		print ("remote filesystem " + serverIP + "/" + mountpoint + "is mounted at " + location)
+		print ("remote filesystem " + serverIP + "/" + mountpoint + " is mounted at " + location)
 		
 
 def bruteForcePassword():
