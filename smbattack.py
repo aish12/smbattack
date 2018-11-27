@@ -44,7 +44,7 @@ def performAttack(location, serverIP, username, password=None):
 		shutil.rmtree(location)	
 	except FileNotFoundError:
 		pass
-	os.mkdir(location)
+	
 	f = open('vulnerableMountPoints.txt', 'w')
 	#with redirect_stdout(f):
 
@@ -56,10 +56,24 @@ def performAttack(location, serverIP, username, password=None):
 	if len(mountpoints) == 0:
 		print ("No mountpoint found")
 	f.close()
-	for mountpoint in mountpoints:
+	if len(mountpoints) > 1:
+		os.mkdir(location)
+		lastFolder = str.split(location, "/")
+		lastFolder = lastFolder[len(lastFolder)-1]
+		location = location + "/" + lastFolder
+		for i in range(len(mountpoints)):
+			mountpoint = mountpoints[i]
+			tempLocation = location + "-" + str(i)
+			os.mkdir(tempLocation)
+			mountArgs = ["mount", "-t", "cifs", "-o", "username=" + username + ",password=" + password, "//" + serverIP + "/" + mountpoint, tempLocation]
+			call(mountArgs)
+			print ("remote filesystem " + serverIP + "/" + mountpoint + "is mounted at " + tempLocation)
+	else:
+		os.mkdir(location)
 		mountArgs = ["mount", "-t", "cifs", "-o", "username=" + username + ",password=" + password, "//" + serverIP + "/" + mountpoint, location]
 		call(mountArgs)
 		print ("remote filesystem " + serverIP + "/" + mountpoint + "is mounted at " + location)
+		
 
 def bruteForcePassword():
 	return "bruteForcePassword"
