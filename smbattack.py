@@ -44,6 +44,11 @@ def performAttack(location, serverIP, username, password=None, copy=False):
 		shutil.rmtree(location)	
 	except FileNotFoundError:
 		pass
+	try:
+		shutil.rmtree("./assets/tempMount")
+	except FileNotFoundError:
+		pass
+	os.mkdir("./assets/tempMount")
 	
 	f = open('vulnerableMountPoints.txt', 'w')
 	#with redirect_stdout(f):
