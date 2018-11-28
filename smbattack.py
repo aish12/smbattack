@@ -114,7 +114,7 @@ parser.add_argument('--copy', type=str, help="Optional.  If set, the mount will 
 
 args = parser.parse_args()
 copy = False
-if args.copy:
+if args.copy == "True":
 	copy = True
 if args.password:
 	performAttack(args.mountloc, args.serverIP, args.username, args.password, copy=copy)
