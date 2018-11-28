@@ -56,6 +56,9 @@ Cifs(Common Internet File System) is a particular implementation of the Server M
 \end{itemize}
 
 \section{What can we improve?}
+\subsection{Automate more parts of Process}
+Automate Nmap so it finds all the IP addresses that have port 445 open. Use crackmapexec to find all the users in the shared network
+
 \subsection{Salted Passwords}
 Hydra only handles unsalted passwords. A stronger password cracking tool would be John The Ripper. If we can access a password hash on the SMB mount point, we would be able to use John to crack that hash.
 
