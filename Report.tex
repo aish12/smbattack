@@ -23,13 +23,14 @@ Our tool is an automation service that allows mounting onto a SMB server with th
 \item Windows Server Name
 \item Username
 \item Password (Optional)
+\item Copy(Optional)
 \end{itemize}
 
 \subsection*{Commands}
 Run the script with the password flag if the password is known. If no password is passed in the parameter, the tool will brute force the password.
 \begin{description}
-\item[Password Known:] \textit{python3 smbattack --mountloc ./mount --servername SMB-Server --username admin --password password}
-\item[Password Unknown (Brute Force):] \textit{python3 smbattack --mountloc ./mount --servername SMB-Server --username admin}
+\item[Password Known:] \textit{python3 smbattack --mountloc ./mount --serverIP SMB-Server --username admin --password password --copy True/False}
+\item[Password Unknown (Brute Force):] \textit{python3 smbattack --mountloc ./mount --serverIP SMB-Server --username admin --copy True/False}
 \end{description}
 
 \renewcommand{\thesubsection}{\Alph{subsection}.}
